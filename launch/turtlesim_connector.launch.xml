@@ -3,6 +3,6 @@
 
     <node pkg="turtlesim_connector" exec="turtlesim_connector_node">
         <remap from="/cmd_vel" to="/cmd_vel"/>
-        <remap from="/odom" to="/odom"/>
+        <remap from="/current" to="/current"/>
     </node>
 </launch>

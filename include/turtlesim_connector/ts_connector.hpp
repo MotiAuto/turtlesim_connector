@@ -5,7 +5,7 @@
 #include <turtlesim/msg/pose.hpp>
 #include <geometry_msgs/msg/twist.hpp>
 #include <geometry_msgs/msg/transform_stamped.hpp>
-#include <nav_msgs/msg/odometry.hpp>
+#include <geometry_msgs/msg/pose_stamped.hpp>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_ros/transform_broadcaster.h>
 
@@ -23,7 +23,7 @@ namespace turtlesim_connector
         private:
         rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr cmd_sub;
         rclcpp::Subscription<turtlesim::msg::Pose>::SharedPtr pose_sub;
-        rclcpp::Publisher<nav_msgs::msg::Odometry>::SharedPtr odom_publisher;
+        rclcpp::Publisher<geometry_msgs::msg::PoseStamped>::SharedPtr odom_publisher;
         rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr cmd_publisher_;
         std::unique_ptr<tf2_ros::TransformBroadcaster> tf_broadcaster;
     };

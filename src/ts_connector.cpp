@@ -16,7 +16,7 @@ namespace turtlesim_connector
 
         tf_broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 
-        odom_publisher = this->create_publisher<nav_msgs::msg::Odometry>("/odom", 0);
+        odom_publisher = this->create_publisher<geometry_msgs::msg::PoseStamped>("/current", 0);
         cmd_publisher_ = this->create_publisher<geometry_msgs::msg::Twist>("/turtle1/cmd_vel", 0);
     }
 
@@ -45,17 +45,14 @@ namespace turtlesim_connector
         t.transform.translation.z = 0.0;
         tf_broadcaster->sendTransform(t);
 
-        nav_msgs::msg::Odometry odom;
-        odom.header.frame_id = "map";
-        odom.child_frame_id = "odom";
-        odom.pose.pose.orientation = t.transform.rotation;
-        odom.pose.pose.position.x = t.transform.translation.x;
-        odom.pose.pose.position.y = t.transform.translation.y;
-        odom.pose.pose.position.z = t.transform.translation.z;
-        odom.twist.twist.linear.x = msg->linear_velocity;
-        odom.twist.twist.angular.z = msg->angular_velocity;
+        geometry_msgs::msg::PoseStamped p;
+        p.header.frame_id = "map";
+        p.pose.orientation = t.transform.rotation;
+        p.pose.position.x = t.transform.translation.x;
+        p.pose.position.y = t.transform.translation.y;
+        p.pose.position.z = t.transform.translation.z;
 
-        odom_publisher->publish(odom);
+        odom_publisher->publish(p);
     }
 }
 

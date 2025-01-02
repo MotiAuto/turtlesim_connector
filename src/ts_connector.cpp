@@ -6,23 +6,27 @@ namespace turtlesim_connector
     {
         cmd_sub = this->create_subscription<geometry_msgs::msg::Twist>(
             "/cmd_vel", 
-            0, 
+            rclcpp::SystemDefaultsQoS(), 
             std::bind(&TurtleSimConnector::cmd_callback, this, _1));
 
         pose_sub = this->create_subscription<turtlesim::msg::Pose>(
             "/turtle1/pose",
-            0,
+            rclcpp::SystemDefaultsQoS(),
             std::bind(&TurtleSimConnector::pose_callback, this, _1));
 
         tf_broadcaster = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
 
-        odom_publisher = this->create_publisher<geometry_msgs::msg::PoseStamped>("/current", 0);
-        cmd_publisher_ = this->create_publisher<geometry_msgs::msg::Twist>("/turtle1/cmd_vel", 0);
+        odom_publisher = this->create_publisher<geometry_msgs::msg::PoseStamped>("/current", rclcpp::SystemDefaultsQoS());
+        cmd_publisher_ = this->create_publisher<geometry_msgs::msg::Twist>("/turtle1/cmd_vel", rclcpp::SystemDefaultsQoS());
     }
 
     void TurtleSimConnector::cmd_callback(const geometry_msgs::msg::Twist::SharedPtr msg)
     {
-        cmd_publisher_->publish(*msg);
+        geometry_msgs::msg::Twist t_cmd;
+        t_cmd.linear.x = msg->linear.x;
+        t_cmd.linear.y = msg->linear.y;
+        t_cmd.angular.z = msg->angular.z;
+        cmd_publisher_->publish(t_cmd);
     }
 
     void TurtleSimConnector::pose_callback(const turtlesim::msg::Pose::SharedPtr msg)
@@ -33,7 +37,7 @@ namespace turtlesim_connector
         geometry_msgs::msg::TransformStamped t;
         t.header.frame_id = "map";
         t.header.stamp = this->get_clock()->now();
-        t.child_frame_id = "odom";
+        t.child_frame_id = "base_link";
 
         t.transform.rotation.w = q.w();
         t.transform.rotation.x = q.x();
